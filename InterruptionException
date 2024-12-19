@@ -1,0 +1,41 @@
+package multithreading;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class PrintTask implements Runnable{
+	private final int sleepTime;
+	private final String taskName;
+	private final static Random generator = new Random();
+	
+	public PrintTask(String name) {
+		taskName = name;
+		sleepTime = generator.nextInt(5000);
+	}
+	
+	public void run() {
+		try {
+			System.out.printf("%s is going to sleep for %d milliseconds\n", taskName, sleepTime);
+			Thread.sleep(sleepTime);
+		}catch(InterruptedException interruptedException) {
+			System.out.printf("%s %s", taskName, "terminated prematurely due to interruption");
+		}
+		System.out.printf("%s done sleeping\n", taskName);
+	}
+	
+	public static void main(String[]args) {
+		PrintTask taskOne = new PrintTask("task1");
+		PrintTask taskTwo = new PrintTask("task2");
+		PrintTask taskThree = new PrintTask("task3");
+		
+		System.out.println("Starting Excecutor");
+		ExecutorService threadExecutor = Executors.newCachedThreadPool();
+		
+		threadExecutor.execute(taskOne);
+		threadExecutor.execute(taskTwo);
+		threadExecutor.execute(taskThree);
+		threadExecutor.shutdown();
+		
+		System.out.println("Tasks started, main ends.\n");
+	}
+}
